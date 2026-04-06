@@ -42,16 +42,16 @@ export const addNewAuctionItem = catchAsyncErrors(async (req, res, next) => {
     return next(
       new ErrorHandler(
         "Auction starting time must be greater than present time.",
-        400
-      )
+        400,
+      ),
     );
   }
   if (new Date(startTime) >= new Date(endTime)) {
     return next(
       new ErrorHandler(
         "Auction starting time must be less than ending time.",
-        400
-      )
+        400,
+      ),
     );
   }
   const alreadyOneAuctionActive = await Auction.find({
@@ -66,15 +66,15 @@ export const addNewAuctionItem = catchAsyncErrors(async (req, res, next) => {
       image.tempFilePath,
       {
         folder: "MERN_AUCTION_PLATFORM_AUCTIONS",
-      }
+      },
     );
     if (!cloudinaryResponse || cloudinaryResponse.error) {
       console.error(
         "Cloudinary error:",
-        cloudinaryResponse.error || "Unknown cloudinary error."
+        cloudinaryResponse.error || "Unknown cloudinary error.",
       );
       return next(
-        new ErrorHandler("Failed to upload auction image to cloudinary.", 500)
+        new ErrorHandler("Failed to upload auction image to cloudinary.", 500),
       );
     }
     const auctionItem = await Auction.create({
@@ -98,7 +98,7 @@ export const addNewAuctionItem = catchAsyncErrors(async (req, res, next) => {
     });
   } catch (error) {
     return next(
-      new ErrorHandler(error.message || "Failed to created auction.", 500)
+      new ErrorHandler(error.message || "Failed to created auction.", 500),
     );
   }
 });
@@ -163,12 +163,12 @@ export const republishItem = catchAsyncErrors(async (req, res, next) => {
   }
   if (!req.body.startTime || !req.body.endTime) {
     return next(
-      new ErrorHandler("Starttime and Endtime for republish is mandatory.")
+      new ErrorHandler("Starttime and Endtime for republish is mandatory."),
     );
   }
   if (new Date(auctionItem.endTime) > Date.now()) {
     return next(
-      new ErrorHandler("Auction is already active, cannot republish", 400)
+      new ErrorHandler("Auction is already active, cannot republish", 400),
     );
   }
   let data = {
@@ -179,16 +179,16 @@ export const republishItem = catchAsyncErrors(async (req, res, next) => {
     return next(
       new ErrorHandler(
         "Auction starting time must be greater than present time",
-        400
-      )
+        400,
+      ),
     );
   }
   if (data.startTime >= data.endTime) {
     return next(
       new ErrorHandler(
         "Auction starting time must be less than ending time.",
-        400
-      )
+        400,
+      ),
     );
   }
 
@@ -216,7 +216,7 @@ export const republishItem = catchAsyncErrors(async (req, res, next) => {
       new: true,
       runValidators: false,
       useFindAndModify: false,
-    }
+    },
   );
   res.status(200).json({
     success: true,
