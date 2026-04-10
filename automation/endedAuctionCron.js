@@ -14,7 +14,9 @@ export const endedAuctionCron = () => {
       endTime: { $lt: now },
       commissionCalculated: false,
     });
+    console.log("Ended auctions found:", endedAuctions.length);
     for (const auction of endedAuctions) {
+      console.log("Processing auction:", auction.title);
       try {
         const commissionAmount = await calculateCommission(auction._id);
         auction.commissionCalculated = true;
@@ -22,6 +24,7 @@ export const endedAuctionCron = () => {
           auctionItem: auction._id,
           amount: auction.currentBid,
         });
+        console.log("Highest bidder found:", highestBidder ? "YES" : "NO");
         const auctioneer = await User.findById(auction.createdBy);
         auctioneer.unpaidCommission = commissionAmount;
         if (highestBidder) {
@@ -56,7 +59,10 @@ export const endedAuctionCron = () => {
           await auction.save();
         }
       } catch (error) {
-        console.error(error || "Error in ended auction cron");
+        console.error(
+          "CRON ERROR:",
+          JSON.stringify(error, Object.getOwnPropertyNames(error)),
+        );
       }
     }
   });
